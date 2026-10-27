@@ -1,0 +1,12 @@
+/* Estilos base para el contenedor del Canvas 2D */
+.canvasContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
