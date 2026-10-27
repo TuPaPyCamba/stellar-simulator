@@ -1,0 +1,30 @@
+:root {
+  /* Paleta Sci-Fi Analógico / Cassette Futurism */
+  --color-bg-space: #080a0f;
+  --color-phosphor-cyan: #00ffcc;
+  --color-vector-amber: #ffb000;
+  --color-alert-crimson: #ff3366;
+  --color-text-main: #e6ffff;
+  --color-text-dim: rgba(0, 255, 204, 0.6);
+  --color-border-hud: rgba(0, 255, 204, 0.25);
+  --color-grid-overlay: rgba(0, 255, 204, 0.15);
+
+  --font-mono: 'JetBrains Mono', 'Share Tech Mono', 'VT323', monospace, ui-monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-space);
+  color: var(--color-text-main);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
