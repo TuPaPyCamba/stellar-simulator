@@ -1,0 +1,6 @@
+/* Estilos de módulos CSS para paneles HUD y controles */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
