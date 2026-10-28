@@ -16,3 +16,22 @@ export interface ICelestialBody {
   initialRadius: number;
   trailHistory: IVector2D[];
 }
+
+/**
+ * Paquete de telemetría instantánea y comparación teórica para el HUD
+ */
+export interface TelemetryData {
+  distance: number;
+  speed: number;
+  gravitationalForce: number;
+  requiredCentripetalForce: number;
+  centripetalAccel: number;
+  tangentialAccel: number;
+  kineticEnergy: number;
+  potentialEnergy: number;
+  totalEnergy: number;
+  theoreticalSpeed: number;
+  theoreticalPeriod: number;
+  simulatedPeriod: number | null;
+  periodErrorPercent: number | null;
+}
