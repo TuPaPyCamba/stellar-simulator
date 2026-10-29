@@ -74,7 +74,7 @@ export function WelcomeModal() {
         <div className={styles.footer}>
           <div className={styles.footerStatus}>
             <span>Próximo hito:</span>
-            <span className={styles.nextPhaseTag}>Fase 1 (Núcleo Físico)</span>
+            <span className={styles.nextPhaseTag}>Fase 3 (HUD y Navegación)</span>
           </div>
           <button
             type="button"
