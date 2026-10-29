@@ -33,11 +33,9 @@ export class PhysicsEngine {
     const rHat = rVec.normalize(); // Vector unitario radial
 
     // 2. Magnitud de la Fuerza de Gravitación Universal: F_g = (G * M * m) / r^2
-
     /**
-    * Fuente: es.wikipedia.org/wiki/Ley_de_gravitación_universal 
-    */
-
+     * Fuente: es.wikipedia.org/wiki/Ley_de_gravitación_universal
+     */
     const forceMag = (this.G * starMass * body.mass) / rSq;
     const forceVec = Vector2D.scale(rHat, forceMag);
 
@@ -45,11 +43,9 @@ export class PhysicsEngine {
     const accelVec = Vector2D.scale(forceVec, 1 / body.mass);
 
     // 4. Integrador Euler Semi-Implícito (Simpléctico):
-
     /**
-    * Fuente: https://www.tutorialesprogramacionya.com/fisicaparaprogramadores/cinematica/tema26.html
-    */
-
+     * Fuente: https://www.tutorialesprogramacionya.com/fisicaparaprogramadores/cinematica/tema26.html
+     */
     // Primero actualizamos velocidad con la aceleración actual
     body.velocity = Vector2D.add(body.velocity, Vector2D.scale(accelVec, dt));
     // Luego actualizamos posición usando la NUEVA velocidad
@@ -129,6 +125,8 @@ export class PhysicsEngine {
       theoreticalPeriod,
       simulatedPeriod,
       periodErrorPercent,
+      orbitProgress: body.getOrbitProgress(),
+      completedOrbits: body.completedOrbits,
     };
   }
 }

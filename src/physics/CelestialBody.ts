@@ -98,6 +98,13 @@ export class CelestialBody implements ICelestialBody {
   }
 
   /**
+   * Devuelve el progreso fraccional (0 a 1) de la vuelta orbital actual
+   */
+  public getOrbitProgress(): number {
+    return Math.min(1, Math.max(0, this.sweptAngle / (2 * Math.PI)));
+  }
+
+  /**
    * Reinicia el historial de estela y los contadores de órbita
    */
   public resetTracking(): void {

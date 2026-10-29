@@ -34,4 +34,6 @@ export interface TelemetryData {
   theoreticalPeriod: number;
   simulatedPeriod: number | null;
   periodErrorPercent: number | null;
+  orbitProgress?: number;
+  completedOrbits?: number;
 }

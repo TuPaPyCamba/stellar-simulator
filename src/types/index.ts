@@ -1,9 +1,8 @@
 /**
  * Tipos globales y definiciones de dominio para ORB-SYS // HUD
- * (Estructura base sin implementación de lógica de negocio)
  */
 
-export type StarSpectralClass = 'M' | 'G' | 'O' | 'NEUTRON';
+export type StarSpectralClass = "M" | "G" | "O" | "NEUTRON";
 
 export interface StarConfig {
   id: string;
@@ -16,10 +15,10 @@ export interface StarConfig {
 }
 
 export type SimulationPhase =
-  | 'STAR_SELECTION'
-  | 'ORBIT_CONFIGURATION'
-  | 'SIMULATING'
-  | 'PAUSED';
+  | "STAR_SELECTION"
+  | "ORBIT_CONFIGURATION"
+  | "SIMULATING"
+  | "PAUSED";
 
 export interface TelemetryData {
   distance: number;
@@ -35,10 +34,14 @@ export interface TelemetryData {
   theoreticalPeriod: number;
   simulatedPeriod: number | null;
   periodErrorPercent: number | null;
+  orbitProgress?: number;
+  completedOrbits?: number;
 }
 
 export interface SimulationParameters {
+  starId: string;
   starMass: number;
+  bodyName: string;
   bodyMass: number;
   initialRadius: number;
   initialTangentialVelocity: number;
