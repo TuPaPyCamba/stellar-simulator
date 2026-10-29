@@ -19,6 +19,7 @@ export interface OrbitCanvasProps {
   body?: CelestialBody | null;
   isPaused?: boolean;
   timeScale?: number;
+  clearSignal?: number;
   renderOptions?: Partial<RenderOptions>;
   onTelemetryUpdate?: (telemetry: TelemetryData) => void;
 }
@@ -32,12 +33,14 @@ export function OrbitCanvas({
   body,
   isPaused = false,
   timeScale = 1,
+  clearSignal = 0,
   renderOptions,
   onTelemetryUpdate,
 }: OrbitCanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<CanvasRenderer | null>(null);
+  const renderOptionsRef = useRef<Partial<RenderOptions> | undefined>(renderOptions);
 
   // Cuerpo orbital de respaldo por si aún no se inyecta uno desde el HUD (Fase 3)
   const fallbackBodyRef = useRef<CelestialBody | null>(null);
@@ -74,12 +77,20 @@ export function OrbitCanvas({
         new Vector2D(0, v0),
         r0
       );
-      rendererRef.current?.hardClear();
     }
-  }, [star, body]);
+    rendererRef.current?.hardClear();
+
+    const activeBody = body !== undefined ? body : fallbackBodyRef.current;
+    if (activeBody && stateRef.current.onTelemetryUpdate) {
+      stateRef.current.onTelemetryUpdate(
+        PhysicsEngine.computeTelemetry(star.mass, new Vector2D(0, 0), activeBody)
+      );
+    }
+  }, [star, body, clearSignal]);
 
   // Actualizar opciones de renderizado cuando cambien las props
   useEffect(() => {
+    renderOptionsRef.current = renderOptions;
     if (rendererRef.current && renderOptions) {
       rendererRef.current.setOptions(renderOptions);
     }
@@ -94,7 +105,7 @@ export function OrbitCanvas({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const renderer = new CanvasRenderer(ctx, undefined, renderOptions);
+    const renderer = new CanvasRenderer(ctx, undefined, renderOptionsRef.current);
     rendererRef.current = renderer;
 
     const updateCanvasSize = () => {
@@ -157,9 +168,8 @@ export function OrbitCanvas({
 
     // --- Sistema de Eventos Aleatorios de Radar (Ambiente / Lore) ---
     const anomalies: SpaceAnomaly[] = [];
-    let anomalyCooldown = 1.0; // Primer contacto a 1 segundo de iniciar
+    let anomalyCooldown = 1.0;
 
-    // Generar nombres aleatorios (string generator medio hard coded, no necesitamos un algoritmo más complejo/dinámico para esto)
     const generateRandomName = (type: "COMET" | "UFO" | "LEVIATHAN") => {
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const randLetter = () => letters[Math.floor(Math.random() * letters.length)];
@@ -181,12 +191,10 @@ export function OrbitCanvas({
 
     const spawnRandomAnomaly = () => {
       const angleIn = Math.random() * Math.PI * 2;
-      // Radio 360 UAS: Garantiza que nazca dentro del área visible de la pantalla
       const spawnRadius = 520;
       const startX = Math.cos(angleIn) * spawnRadius;
       const startY = Math.sin(angleIn) * spawnRadius;
 
-      // Punto de paso cercano al centro (entre 70 y 160 UAS) sin chocar con la estrella
       const passDirection = Math.random() < 0.5 ? 1 : -1;
       const passDistance = (70 + Math.random() * 90) * passDirection;
       const targetX = Math.cos(angleIn + Math.PI / 2) * passDistance;
@@ -198,7 +206,6 @@ export function OrbitCanvas({
 
       const roll = Math.random();
       if (roll < 0.35) {
-        // 1. Cometa hiperbólico
         const speed = 65 + Math.random() * 30;
         anomalies.push({
           id: `comet-${Date.now()}`,
@@ -213,7 +220,6 @@ export function OrbitCanvas({
           maxAge: 11,
         });
       } else if (roll < 0.85) {
-        // 2. Nave no identificada
         const speed = 45 + Math.random() * 20;
         anomalies.push({
           id: `ufo-${Date.now()}`,
@@ -228,7 +234,6 @@ export function OrbitCanvas({
           maxAge: 15,
         });
       } else {
-        // 3. Bio-firma abisal
         const speed = 32 + Math.random() * 12;
         anomalies.push({
           id: `void-${Date.now()}`,
@@ -262,7 +267,7 @@ export function OrbitCanvas({
       const activeBody = externalBody !== undefined ? externalBody : fallbackBodyRef.current;
 
       if (activeBody && !paused) {
-        const steps = Math.max(1, Math.round(warp));
+        const steps = Math.max(1, Math.round(warp * 2));
         const scaledDt = (SIMULATION_CONSTANTS.FIXED_DT * warp) / steps;
 
         for (let i = 0; i < steps; i++) {
@@ -287,7 +292,7 @@ export function OrbitCanvas({
         anomalyCooldown -= dt;
         if (anomalyCooldown <= 0 && anomalies.length < 2) {
           spawnRandomAnomaly();
-          anomalyCooldown = 25 + Math.random() * 10; // Nuevo evento
+          anomalyCooldown = 25 + Math.random() * 10;
         }
 
         for (let i = anomalies.length - 1; i >= 0; i--) {
